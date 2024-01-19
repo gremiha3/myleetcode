@@ -2,101 +2,97 @@ package main
 
 import "fmt"
 
-type ListNode struct {
-	Val  int
-	Next *ListNode
+type ListNode struct { //структура элемента списка
+	Val  int       //значение, сохраняемое в элементе списка
+	Next *ListNode //указатель на следующий элемент списка
 }
 
-var arr1 = []int{1, 2, 4}
-var arr2 = []int{1, 3, 4}
-var nodeList1 = &ListNode{}
-var headList1 *ListNode
-var nodeList2 = &ListNode{}
-var headList2 *ListNode
+var arr1 = []int{1, 3, 4} //исходные данные
+var arr2 = []int{1, 2, 4}
+var nodeList1 = &ListNode{} //создаем указатель на первый элемент списка Арр1
+var headList1 *ListNode     //объявляем указатель на начало списка Арр1
+var nodeList2 = &ListNode{} //создаем указатель на первый элемент списка Арр2
+var headList2 *ListNode     //объявляем указатель на начало списка Арр2
 
-func mergeTwoLists(list1 *ListNode, list2 *ListNode) *ListNode {
-	//fmt.Println("---mergeTwoLists-function---")
-
-	merge := &ListNode{}
-	var mergeHeader *ListNode
-	if list1 == nil && list2 == nil {
-		return mergeHeader
+func mergeTwoLists(list1 *ListNode, list2 *ListNode) *ListNode { //функция для LeetCode
+	merge := &ListNode{}              //создаем список слияния
+	var mergeHeader *ListNode         //объявляем указатель на начало списка слияния
+	if list1 == nil && list2 == nil { //если входные списки не существуют, то
+		return mergeHeader //возвращаем отсутствие списка слияния
 	}
-	//fmt.Printf("list1 = %v\n", list1)
-	//fmt.Printf("list2 = %v\n", list2)
-	//fmt.Printf("merHed = %v\n", mergeHeader)
-	mergeHeader = merge
-	for {
-		if list1 == nil && list2 == nil {
+	mergeHeader = merge //начало списка слияния указывает на первый элемент
+	for {               //обработка очереди на добавление в список слияния
+		if list1 == nil && list2 == nil { //если входные списки кончились, то выходим
 			break
 		}
-		if list1 != nil && list2 == nil { //001
-			//fmt.Printf("001___list1.Val = %d\n", list1.Val)
-			merge.Val = list1.Val
-			list1 = list1.Next
-		} else if list1 == nil && list2 != nil { //002
-			//fmt.Printf("002___list2.Val = %d\n", list2.Val)
-			merge.Val = list2.Val
-			list2 = list2.Next
-		} else if list1 != nil && list2 != nil && list1.Val < list2.Val { //004
-			//fmt.Printf("004___list1.Val = %d\n", list1.Val)
-			merge.Val = list1.Val
-			list1 = list1.Next
-		} else if list2 != nil { //005
-			//fmt.Printf("005___list2.Val = %d\n", list2.Val)
-			merge.Val = list2.Val
-			list2 = list2.Next
-		} else { //006
-			//fmt.Printf("006___Break\n")
+		if list1 != nil && list2 == nil { //если остался только список-1, то
+			merge.Val = list1.Val //добавляем из него в список слияния его элемент
+			list1 = list1.Next    //переходим на следующий элемент списка-1
+		} else if list1 == nil && list2 != nil { //если остался только список-2, то
+			merge.Val = list2.Val //добавляем из него в список слияния его элемент
+			list2 = list2.Next    //переходим на следующий элемент списка-2
+		} else if list1 != nil && list2 != nil && list1.Val < list2.Val { //если оба списка непустые, и элемент-1 меньше элемента-2, то
+			merge.Val = list1.Val //добавляем в список слияния элемент-1
+			list1 = list1.Next    //переходим на следующий элемент списка-1
+		} else if list2 != nil {
+			merge.Val = list2.Val //иначе добавляем в список слияния элемент-2
+			list2 = list2.Next    //переходим на следующий элемент списка-2
+		} else {
 			break
 		}
-		//fmt.Printf("Step \n")
-		if list1 == nil && list2 == nil {
+
+		if list1 == nil && list2 == nil { //если входные списки опустели, то выходим из цикла
 			break
 		}
-		merge.Next = &ListNode{}
-		merge = merge.Next
+		merge.Next = &ListNode{} //иначе создаем следующий элемент списка слияния
+		merge = merge.Next       //и переходим на него
 	}
-	//fmt.Printf("merge addr = %p\n", merge)
-	//fmt.Printf("mergeHeader addr = %p\n", mergeHeader)
-
-	return mergeHeader
-
+	return mergeHeader //возвращаем указатель на начало списка слияния
 }
 
+// метод добавления элемента в список:
+// получаем в метод добавляемое значение и указатель на последний элемент списка
 func (nl *ListNode) Addback(addval int, head *ListNode) (*ListNode, *ListNode) {
-	ele := &ListNode{
-		Val: addval,
+	ele := &ListNode{ //создаем новый элемент
+		Val: addval, //добавляем в него входное значение
 	}
-	if head == nil {
-		head = ele
-		nl = ele
-	} else {
-		nl.Next = ele
+	if head == nil { //если входной указатель никуда не указывает, значит список еще не создан
+		head = ele //созданный элемент становится началом списка
+		nl = ele   //он же становится текущим элементом списка
+	} else { //если список уже существует, то
+		nl.Next = ele //созданый элемент становится следующим элементом списка
 	}
-	return ele, head
+	return ele, head //возвращаем указатели на созданый элемент и на начало списка
 }
+
+// функция печати списка:
 func printSingleLinkedList(head *ListNode) {
-	for {
-		if head != nil {
-			fmt.Printf("node = %d\n", head.Val)
-			if head.Next == nil {
-				break
+	for { //беконечный цикл до первого несущетвующего элемента
+		if head != nil { //если элемент существует (т.е. head указывает на адрес хранения элемента)
+			fmt.Printf("node = %d\n", head.Val) //печатаем значение элемента
+			if head.Next == nil {               //если указатель на следующий элемент никуда не указывает,
+				break //то значит это последний элемент списка, прерываем бесконечный цикл
 			}
-			head = head.Next
+			head = head.Next // иначе - текущий элемент становится следующим, и идем в начало цикла
 		} else {
 			break
 		}
 	}
 }
 func main() {
-	headList1 = nil
+	//-----------------создаем первый список из массива Арр1---------------------------
+	headList1 = nil //при объявлении списка, список еще не существует
 	fmt.Printf("-------------------------------------\n")
-	fmt.Printf("array1 = %v\n", arr1)
-	for _, val := range arr1 {
-		nodeList1, headList1 = nodeList1.Addback(val, headList1)
-	}
-	printSingleLinkedList(headList1)
+	fmt.Printf("array1 = %v\n", arr1) //печатаем исходный массив с данными
+	for _, val := range arr1 {        //идем по массиву и добавляем каждый элемент массива в список
+		nodeList1, headList1 = nodeList1.Addback(val, headList1) //при добавлении элемента, если списка еще не существует, то
+	} //сохраняем указатель на первый элемент списка, как на начало списка и больше не изменяем
+	//дальше просто добавляем элементы в список
+	printSingleLinkedList(headList1) //печатаем список, указав его начало
+	//
+	//
+	//-----------------создаем второй список из массива Арр2---------------------------
+	//работаем так же со вторым исходным массивом:
 	headList2 = nil
 	fmt.Printf("-------------------------------------\n")
 	fmt.Printf("array2 = %v\n", arr2)
@@ -104,8 +100,10 @@ func main() {
 		nodeList2, headList2 = nodeList2.Addback(val, headList2)
 	}
 	printSingleLinkedList(headList2)
-
-	// -----------------------------------------------------------------------------------
-	printSingleLinkedList(mergeTwoLists(headList1, headList2))
-	fmt.Printf("Result = %v", mergeTwoLists(headList1, headList2))
+	//
+	//
+	// -------------Печатаем результирующий список-----------------------------------
+	fmt.Printf("-------------------------------------\n")
+	fmt.Printf("Merge Arrays:\n")
+	printSingleLinkedList(mergeTwoLists(headList1, headList2)) //в функцию слияния подаем указатели на начало обоих списков
 }
